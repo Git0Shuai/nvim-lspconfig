@@ -3,11 +3,16 @@ local util = require 'lspconfig.util'
 
 -- Having server name defined here is the convention, this is often times also the first entry in the `cmd` table.
 local server_name = 'luahelper'
+local cmd = { server_name }
+
+if vim.fn.has 'win32' == 1 then
+  cmd = { 'cmd.exe', '/C', bin_name, '-mode=1' }
+end
 
 return {
   default_config = {
     -- This should be executable on the command line, arguments (such as `--stdio`) are additional entries in the list.
-    cmd = { 'luahelper' },
+    cmd = cmd,
     -- These are the filetypes that the server will either attach or start in response to opening. The user must have a filetype plugin matching the filetype, either via the built-in runtime files or installed via plugin.
     filetypes = { 'lua' },
     -- The root directory that lspconfig uses to determine if it should start a new language server, or attach the current buffer to a previously running language server.
