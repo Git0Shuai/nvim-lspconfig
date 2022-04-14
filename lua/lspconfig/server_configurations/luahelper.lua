@@ -4,7 +4,7 @@ local util = require 'lspconfig.util'
 -- Having server name defined here is the convention, this is often times also the first entry in the `cmd` table.
 local server_name = 'luahelper'
 
-configs[server_name] = {
+return {
   default_config = {
     -- This should be executable on the command line, arguments (such as `--stdio`) are additional entries in the list.
     cmd = { 'luahelper' },
