@@ -3,7 +3,7 @@ local util = require 'lspconfig.util'
 
 -- Having server name defined here is the convention, this is often times also the first entry in the `cmd` table.
 local server_name = 'luahelper'
-local cmd = { server_name }
+local cmd = { server_name, '-mode=1' }
 
 if vim.fn.has 'win32' == 1 then
   cmd = { 'cmd.exe', '/C', server_name, '-mode=1' }
