@@ -6,7 +6,7 @@ local server_name = 'luahelper'
 local cmd = { server_name }
 
 if vim.fn.has 'win32' == 1 then
-  cmd = { 'cmd.exe', '/C', bin_name, '-mode=1' }
+  cmd = { 'cmd.exe', '/C', server_name, '-mode=1' }
 end
 
 return {
