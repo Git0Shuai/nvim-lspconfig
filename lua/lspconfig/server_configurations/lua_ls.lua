@@ -2,10 +2,12 @@ local util = require 'lspconfig.util'
 
 local root_files = {
   '.luarc.json',
+  '.luarc.jsonc',
   '.luacheckrc',
   '.stylua.toml',
   'stylua.toml',
   'selene.toml',
+  'selene.yml',
 }
 
 local bin_name = 'lua-language-server'
@@ -20,7 +22,15 @@ return {
     cmd = cmd,
     filetypes = { 'lua' },
     root_dir = function(fname)
-      return util.root_pattern(unpack(root_files))(fname) or util.find_git_ancestor(fname)
+      local root = util.root_pattern(unpack(root_files))(fname)
+      if root and root ~= vim.env.HOME then
+        return root
+      end
+      root = util.root_pattern 'lua/'(fname)
+      if root then
+        return root .. '/lua/'
+      end
+      return util.find_git_ancestor(fname)
     end,
     single_file_support = true,
     log_level = vim.lsp.protocol.MessageType.Warning,
@@ -28,11 +38,11 @@ return {
   },
   docs = {
     description = [[
-https://github.com/sumneko/lua-language-server
+https://github.com/luals/lua-language-server
 
 Lua language server.
 
-`lua-language-server` can be installed by following the instructions [here](https://github.com/sumneko/lua-language-server/wiki/Build-and-Run).
+`lua-language-server` can be installed by following the instructions [here](https://github.com/luals/lua-language-server/wiki/Getting-Started#command-line).
 
 The default `cmd` assumes that the `lua-language-server` binary can be found in `$PATH`.
 
@@ -45,7 +55,7 @@ initial requests (completion, location) upon starting as well as time to first d
 Completion results will include a workspace indexing progress message until the server has finished indexing.
 
 ```lua
-require'lspconfig'.sumneko_lua.setup {
+require'lspconfig'.lua_ls.setup {
   settings = {
     Lua = {
       runtime = {
@@ -69,13 +79,13 @@ require'lspconfig'.sumneko_lua.setup {
 }
 ```
 
-See `lua-language-server`'s [documentation](https://github.com/sumneko/lua-language-server/blob/master/locale/en-us/setting.lua) for an explanation of the above fields:
-* [Lua.runtime.path](https://github.com/sumneko/lua-language-server/blob/076dd3e5c4e03f9cef0c5757dfa09a010c0ec6bf/locale/en-us/setting.lua#L5-L13)
-* [Lua.workspace.library](https://github.com/sumneko/lua-language-server/blob/076dd3e5c4e03f9cef0c5757dfa09a010c0ec6bf/locale/en-us/setting.lua#L77-L78)
+See `lua-language-server`'s [documentation](https://github.com/luals/lua-language-server/blob/master/locale/en-us/setting.lua) for an explanation of the above fields:
+* [Lua.runtime.path](https://github.com/luals/lua-language-server/blob/076dd3e5c4e03f9cef0c5757dfa09a010c0ec6bf/locale/en-us/setting.lua#L5-L13)
+* [Lua.workspace.library](https://github.com/luals/lua-language-server/blob/076dd3e5c4e03f9cef0c5757dfa09a010c0ec6bf/locale/en-us/setting.lua#L77-L78)
 
 ]],
     default_config = {
-      root_dir = [[root_pattern(".luarc.json", ".luacheckrc", ".stylua.toml", "stylua.toml", "selene.toml", ".git")]],
+      root_dir = [[root_pattern(".luarc.json", ".luarc.jsonc", ".luacheckrc", ".stylua.toml", "stylua.toml", "selene.toml", "selene.yml", ".git")]],
     },
   },
 }

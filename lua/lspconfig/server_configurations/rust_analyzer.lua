@@ -41,20 +41,20 @@ return {
       local cargo_workspace_dir = nil
       if cm == 0 then
         cargo_workspace_dir = vim.json.decode(cargo_metadata)['workspace_root']
+        if cargo_workspace_dir ~= nil then
+          cargo_workspace_dir = util.path.sanitize(cargo_workspace_dir)
+        end
       else
         vim.notify(
           string.format('[lspconfig] cmd (%q) failed:\n%s', table.concat(cmd, ' '), cargo_metadata_err),
           vim.log.levels.WARN
         )
       end
-      return util.path.sanitize(cargo_workspace_dir)
+      return cargo_workspace_dir
         or cargo_crate_dir
         or util.root_pattern 'rust-project.json'(fname)
         or util.find_git_ancestor(fname)
     end,
-    settings = {
-      ['rust-analyzer'] = {},
-    },
   },
   commands = {
     CargoReload = {
@@ -70,7 +70,19 @@ https://github.com/rust-analyzer/rust-analyzer
 
 rust-analyzer (aka rls 2.0), a language server for Rust
 
-See [docs](https://github.com/rust-analyzer/rust-analyzer/tree/master/docs/user#settings) for extra settings.
+
+See [docs](https://github.com/rust-analyzer/rust-analyzer/tree/master/docs/user#settings) for extra settings. The settings can be used like this:
+```lua
+require'lspconfig'.rust_analyzer.setup{
+  settings = {
+    ['rust-analyzer'] = {
+      diagnostics = {
+        enable = false;
+      }
+    }
+  }
+}
+```
     ]],
     default_config = {
       root_dir = [[root_pattern("Cargo.toml", "rust-project.json")]],
